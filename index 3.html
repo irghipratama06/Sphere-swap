@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>Ember Swap AI</title>
+<style>
+:root{--bg:#050505;--card:#141414;--line:#2a2a2a;--or:#ff7a00;--or2:#ffa033;--tx:#f4f4f4;--mu:#8a8a8a;--ok:#3ddc84;--er:#ff5252}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+body{display:flex;flex-direction:column;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+button{font:inherit;cursor:pointer;border:0}
+.btn{background:linear-gradient(135deg,var(--or),var(--or2));color:#000;font-weight:700;padding:14px 18px;border-radius:14px;width:100%}
+.btn.ghost{background:transparent;color:var(--or);border:1px solid var(--or)}
+.btn.sm{width:auto;padding:9px 14px;border-radius:10px;font-size:14px}
+.screen{display:none;flex:1;flex-direction:column;min-height:0}
+.screen.on{display:flex}
+.center{align-items:center;justify-content:center;text-align:center;padding:28px;gap:14px}
+.logo{width:76px;height:76px;border-radius:22px;background:linear-gradient(135deg,var(--or),#c24d00);display:grid;place-items:center;font-size:38px;box-shadow:0 0 40px #ff7a0055}
+h1{font-size:26px}h1 b{color:var(--or)}
+p.mu{color:var(--mu);font-size:14px;line-height:1.5;max-width:340px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;width:100%;max-width:380px;text-align:left}
+.row{display:flex;justify-content:space-between;gap:10px;padding:6px 0;font-size:14px}
+.row span:first-child{color:var(--mu)}
+.mono{font-family:ui-monospace,monospace;word-break:break-all;font-size:12px}
+header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--line)}
+header .t{font-weight:800}header .t b{color:var(--or)}
+.chip{background:#1d1206;border:1px solid #5a3000;color:var(--or2);font-size:12px;padding:5px 10px;border-radius:99px}
+nav{display:flex;border-bottom:1px solid var(--line)}
+nav button{flex:1;padding:12px;background:none;color:var(--mu);font-weight:600;border-bottom:2px solid transparent}
+nav button.on{color:var(--or);border-color:var(--or)}
+.pane{display:none;flex:1;min-height:0;flex-direction:column}
+.pane.on{display:flex}
+#log{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.m{max-width:88%;padding:10px 13px;border-radius:16px;font-size:14.5px;line-height:1.45;white-space:pre-wrap}
+.m.u{align-self:flex-end;background:var(--or);color:#000;border-bottom-right-radius:4px}
+.m.b{align-self:flex-start;background:var(--card);border:1px solid var(--line);border-bottom-left-radius:4px}
+.m.b.ok{border-color:var(--ok)}.m.b.er{border-color:var(--er)}
+.acts{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.hints{display:flex;gap:8px;overflow-x:auto;padding:8px 14px}
+.hints button{white-space:nowrap;background:var(--card);border:1px solid var(--line);color:var(--tx);padding:7px 12px;border-radius:99px;font-size:13px}
+.bar{display:flex;gap:8px;padding:10px 14px 14px}
+.bar input{flex:1;background:var(--card);border:1px solid var(--line);color:var(--tx);padding:13px 14px;border-radius:14px;font-size:16px;outline:0}
+.bar input:focus{border-color:var(--or)}
+.bar button{background:var(--or);color:#000;font-weight:800;border-radius:14px;padding:0 18px}
+#pf{padding:16px;overflow-y:auto}
+.tot{background:linear-gradient(135deg,#2a1300,#0b0b0b);border:1px solid #5a3000;border-radius:18px;padding:18px;margin-bottom:14px}
+.tot small{color:var(--mu)}.tot div{font-size:32px;font-weight:800;color:var(--or2)}
+.as{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:8px}
+.ic{width:38px;height:38px;border-radius:50%;background:#2a1300;color:var(--or);display:grid;place-items:center;font-weight:800;font-size:13px}
+.as .n{flex:1}.as .n small{display:block;color:var(--mu)}.as .v{text-align:right}
+.h{font-size:13px;color:var(--mu);margin:16px 0 8px}
+.tx{font-size:13px;background:var(--card);border-left:3px solid var(--or);padding:9px 11px;border-radius:8px;margin-bottom:6px}
+</style>
+</head>
+<body>
+
+<!-- CONNECT -->
+<section id="s1" class="screen center on">
+  <div class="logo">🔥</div>
+  <h1>Ember <b>Swap AI</b></h1>
+  <p class="mu">Trade with plain English. Swap and bridge by typing a command, right from your Sphere wallet.</p>
+  <button class="btn" id="bConnect" style="max-width:380px">Connect Sphere Wallet</button>
+  <button class="btn ghost" id="bDemo" style="max-width:380px">Try Demo Mode</button>
+  <p class="mu" id="cErr" style="color:var(--er)"></p>
+</section>
+
+<!-- CONFIRM -->
+<section id="s2" class="screen center">
+  <div class="logo">✅</div>
+  <h1>Confirm <b>connection</b></h1>
+  <div class="box">
+    <div class="row"><span>Mode</span><span id="cMode"></span></div>
+    <div class="row"><span>Account</span><span id="cId" class="mono"></span></div>
+    <div class="row"><span>Network</span><span>testnet2</span></div>
+    <div class="row"><span>Permissions</span><span>identity, balance, transfer, sign</span></div>
+  </div>
+  <p class="mu">Every trade still asks for your confirmation before anything is sent.</p>
+  <button class="btn" id="bEnter" style="max-width:380px">Confirm &amp; Enter</button>
+  <button class="btn ghost" id="bBack" style="max-width:380px">Cancel</button>
+</section>
+
+<!-- APP -->
+<section id="s3" class="screen">
+  <header><div class="t">🔥 Ember <b>Swap AI</b></div><div class="chip" id="chip"></div></header>
+  <nav><button class="on" data-t="chat">Chat</button><button data-t="pf">Portfolio</button></nav>
+  <div id="chat" class="pane on">
+    <div id="log"></div>
+    <div class="hints" id="hints"></div>
+    <div class="bar"><input id="inp" placeholder="e.g. swap 10 uct to sol" autocomplete="off" enterkeyhint="send"><button id="send">Send</button></div>
+  </div>
+  <div id="pfp" class="pane"><div id="pf"></div></div>
+</section>
+
+<script type="module">
+const $=s=>document.querySelector(s);
+const PRICE={UCT:0.5,SOL:150,BTC:65000,ETH:3000,USDC:1,USDT:1};
+const CHAINS=['solana','bitcoin','ethereum','unicity','base','arbitrum'];
+const state={mode:null,client:null,identity:null,bal:{UCT:250,SOL:2.5,BTC:0.01,USDC:120},hist:[],pending:null};
+
+const show=id=>{document.querySelectorAll('.screen').forEach(e=>e.classList.toggle('on',e.id===id))};
+const fmt=(n,d=4)=>Number(n).toLocaleString('en-US',{maximumFractionDigits:d});
+const usd=n=>'$'+Number(n).toLocaleString('en-US',{maximumFractionDigits:2});
+
+/* ---------- Connect ---------- */
+$('#bConnect').onclick=async()=>{
+  $('#cErr').textContent='Connecting…';
+  try{
+    const [{autoConnect},{SPHERE_NETWORKS}]=await Promise.all([
+      import('https://cdn.jsdelivr.net/npm/@unicitylabs/sphere-sdk/connect/browser/+esm'),
+      import('https://cdn.jsdelivr.net/npm/@unicitylabs/sphere-sdk/connect/+esm')
+    ]);
+    const r=await autoConnect({
+      dapp:{name:'Ember Swap AI',url:location.origin,icon:location.origin+'/favicon.ico'},
+      network:SPHERE_NETWORKS.testnet2,
+      permissions:['identity:read','balance:read','tokens:read','history:read','transfer:request','sign:request'],
+      walletUrl:'https://sphere.unicity.network',silent:true
+    });
+    state.client=r.client;state.identity=r.connection.identity;state.mode='live';
+    r.client.on?.('wallet:disconnected',()=>location.reload());
+    $('#cErr').textContent='';toConfirm();
+  }catch(e){
+    $('#cErr').textContent='Could not connect to wallet ('+(e?.message||e?.code||'unknown')+'). Use Demo Mode to try the app.';
+  }
+};
+$('#bDemo').onclick=()=>{state.mode='demo';state.identity={nametag:'demo-user',directAddress:'DIRECT://demo0000000000000000'};toConfirm()};
+function toConfirm(){
+  const i=state.identity||{};
+  $('#cMode').textContent=state.mode==='live'?'Live wallet':'Demo (simulated)';
+  $('#cId').textContent=i.nametag?('@'+i.nametag):(i.directAddress||'—');
+  show('s2');
+}
+$('#bBack').onclick=()=>{state.client?.disconnect?.();show('s1')};
+$('#bEnter').onclick=async()=>{
+  show('s3');
+  const i=state.identity||{};
+  $('#chip').textContent=(state.mode==='live'?'● ':'◌ demo ')+(i.nametag?'@'+i.nametag:'wallet');
+  if(state.mode==='live')await loadBalances();
+  bot(`Welcome${i.nametag?', @'+i.nametag:''}! Tell me what to do, for example:\n• swap 10 uct to sol\n• swap 10 uct to sol or btc\n• bridge 50 usdc to solana\n• send 5 uct to @alice\n• balance`);
+  renderPf();
+};
+
+/* ---------- Balances (live) ---------- */
+async function loadBalances(){
+  try{
+    const c=state.client;
+    const res=await (c.query?c.query('sphere_getBalance'):c.getBalance());
+    const arr=Array.isArray(res)?res:(res?.balances||[]);
+    const b={};
+    arr.forEach(x=>{const s=(x.symbol||x.coinId||'?').toUpperCase();b[s]=(b[s]||0)+Number(x.total??x.amount??0)});
+    if(Object.keys(b).length)state.bal=b;
+  }catch(e){bot('Could not load live balances; showing placeholders.','er')}
+}
+
+/* ---------- Chat ---------- */
+const log=$('#log');
+function add(cls,txt){const d=document.createElement('div');d.className='m '+cls;d.textContent=txt;log.appendChild(d);log.scrollTop=log.scrollHeight;return d}
+const bot=(t,k='')=>add('b '+k,t);
+function card(txt,buttons){
+  const d=add('b',txt);const a=document.createElement('div');a.className='acts';
+  buttons.forEach(([l,fn,g])=>{const b=document.createElement('button');b.className='btn sm'+(g?' ghost':'');b.textContent=l;b.onclick=()=>{a.remove();fn()};a.appendChild(b)});
+  d.appendChild(a);log.scrollTop=log.scrollHeight;
+}
+
+function parse(t){
+  t=t.trim().replace(/\s+/g,' ');
+  let m;
+  if(/^(balance|portfolio|bal)$/i.test(t))return{type:'bal'};
+  if(m=t.match(/^(?:swap|convert|tukar)\s+([\d.,]+)\s+(\w+)\s+(?:to|ke|for|into)\s+(\w+)(?:\s+(?:or|atau)\s+(\w+))?$/i))
+    return{type:'swap',amt:+m[1].replace(',','.'),from:m[2].toUpperCase(),to:[m[3].toUpperCase(),m[4]&&m[4].toUpperCase()].filter(Boolean)};
+  if(m=t.match(/^bridge\s+([\d.,]+)\s+(\w+)\s+(?:to|ke)\s+(\w+)$/i))
+    return{type:'bridge',amt:+m[1].replace(',','.'),from:m[2].toUpperCase(),chain:m[3].toLowerCase()};
+  if(m=t.match(/^(?:send|kirim)\s+([\d.,]+)\s+(\w+)\s+(?:to|ke)\s+(\S+)$/i))
+    return{type:'send',amt:+m[1].replace(',','.'),from:m[2].toUpperCase(),to:m[3]};
+  return null;
+}
+
+function handle(text){
+  add('u',text);
+  const p=parse(text);
+  if(!p)return bot('I did not understand that. Try: "swap 10 uct to sol", "bridge 50 usdc to solana" or "send 5 uct to @alice".');
+  if(p.type==='bal')return bot(Object.entries(state.bal).map(([k,v])=>`${k}: ${fmt(v)}`).join('\n')+`\n\nTotal ≈ ${usd(total())}`);
+  if(!(p.amt>0))return bot('Amount must be greater than zero.','er');
+  if(!(state.bal[p.from]>=p.amt))return bot(`Insufficient ${p.from}. You have ${fmt(state.bal[p.from]||0)}.`,'er');
+  if(p.type==='swap'){
+    if(p.to.length>1)return card(`Which target for ${p.amt} ${p.from}?`,p.to.map(t=>[t,()=>review({...p,to:t})]));
+    return review({...p,to:p.to[0]});
+  }
+  if(p.type==='bridge'){
+    if(!CHAINS.includes(p.chain))return bot('Unknown chain. Supported: '+CHAINS.join(', '),'er');
+    return review(p);
+  }
+  review(p);
+}
+
+function review(p){
+  let s;
+  if(p.type==='swap'){
+    if(!PRICE[p.to]||!PRICE[p.from])return bot('No price for that pair yet.','er');
+    p.out=p.amt*PRICE[p.from]/PRICE[p.to]*0.997;
+    s=`Swap review\n${fmt(p.amt)} ${p.from} → ~${fmt(p.out)} ${p.to}\nFee 0.3% · price indicative`;
+  }else if(p.type==='bridge'){
+    p.out=p.amt*0.999;
+    s=`Bridge review\n${fmt(p.amt)} ${p.from} → ${p.chain}\nYou receive ~${fmt(p.out)} ${p.from}`;
+  }else s=`Send review\n${fmt(p.amt)} ${p.from} → ${p.to}`;
+  card(s+'\n\nConfirm execution?',[['Confirm',()=>run(p)],['Cancel',()=>bot('Cancelled.'),1]]);
+}
+
+async function run(p){
+  const w=bot('Executing…');
+  try{
+    if(state.mode==='live')await execLive(p);
+    else await new Promise(r=>setTimeout(r,900));
+    apply(p);
+    w.textContent=`Done ✔ ${label(p)}`+(state.mode==='demo'?'\n(simulated)':'');w.classList.add('ok');
+    state.hist.unshift(label(p)+' · '+new Date().toLocaleTimeString());renderPf();
+  }catch(e){
+    const c=e?.code;
+    w.classList.add('er');
+    if(c===4003)w.textContent='You rejected the request in your wallet. Nothing was sent.';
+    else if(c===4009)w.textContent='Wallet is locked. Unlock it, then try again.';
+    else if(c===4201)w.textContent='Outcome unknown: the wallet took the request but the answer was lost. Do NOT retry. Check your history first.';
+    else w.textContent='Failed: '+(e?.message||'unknown error');
+  }
+}
+
+/* >>> Wallet bridge. Intent names depend on your wallet/SDK version. Adjust here. <<< */
+async function execLive(p){
+  const c=state.client;
+  if(p.type==='send')return c.intent('send',{recipient:p.to,amount:String(p.amt),coinId:p.from});
+  if(p.type==='swap')return c.intent('swap',{from:p.from,to:p.to,amount:String(p.amt)});
+  if(p.type==='bridge')return c.intent('bridge',{coinId:p.from,amount:String(p.amt),destinationChain:p.chain});
+}
+function apply(p){
+  state.bal[p.from]-=p.amt;
+  if(p.type==='swap')state.bal[p.to]=(state.bal[p.to]||0)+p.out;
+  if(p.type==='bridge'&&p.chain!=='unicity')state.bal[p.from+'@'+p.chain]=(state.bal[p.from+'@'+p.chain]||0)+p.out;
+  if(p.type==='bridge'&&p.chain==='unicity')state.bal[p.from]+=p.out;
+  Object.keys(state.bal).forEach(k=>{if(state.bal[k]<1e-9)delete state.bal[k]});
+}
+const label=p=>p.type==='swap'?`Swapped ${fmt(p.amt)} ${p.from} → ${fmt(p.out)} ${p.to}`:p.type==='bridge'?`Bridged ${fmt(p.amt)} ${p.from} → ${p.chain}`:`Sent ${fmt(p.amt)} ${p.from} → ${p.to}`;
+
+/* ---------- Portfolio ---------- */
+const total=()=>Object.entries(state.bal).reduce((s,[k,v])=>s+v*(PRICE[k.split('@')[0]]||0),0);
+function renderPf(){
+  const rows=Object.entries(state.bal).map(([k,v])=>{const px=PRICE[k.split('@')[0]]||0;
+    return `<div class="as"><div class="ic">${k.slice(0,3)}</div><div class="n">${k}<small>${usd(px)}</small></div><div class="v">${fmt(v)}<small style="display:block;color:var(--mu)">${usd(v*px)}</small></div></div>`}).join('');
+  $('#pf').innerHTML=`<div class="tot"><small>Total value (indicative)</small><div>${usd(total())}</div></div>${rows||'<p class="mu">No assets.</p>'}<div class="h">Recent activity</div>${state.hist.map(h=>`<div class="tx">${h}</div>`).join('')||'<p class="mu">No trades yet.</p>'}`;
+}
+
+/* ---------- UI wiring ---------- */
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('on',x===b));
+  $('#chat').classList.toggle('on',b.dataset.t==='chat');$('#pfp').classList.toggle('on',b.dataset.t==='pf');
+  if(b.dataset.t==='pf')renderPf();
+});
+['swap 10 uct to sol','swap 1 sol to uct','swap 10 uct to sol or btc','bridge 50 usdc to solana','balance'].forEach(t=>{
+  const b=document.createElement('button');b.textContent=t;b.onclick=()=>handle(t);$('#hints').appendChild(b)});
+const go=()=>{const v=$('#inp').value.trim();if(v){$('#inp').value='';handle(v)}};
+$('#send').onclick=go;$('#inp').onkeydown=e=>{if(e.key==='Enter')go()};
+</script>
+</body>
+</html>
